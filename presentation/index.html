@@ -22,59 +22,272 @@
     </script>
   </head>
   <body>
+    <!--
+        
+      -->
     <div class="reveal">
       <div class="slides">
-	<section data-markdown>
-          ## What is AWS Lambda?
-        </section>
-        <section data-markdown>
-          ## Supported Runtimes
+        <section>
+	  <section data-markdown>
+            ## What is AWS Lambda?
+          </section>
+          <section data-markdown>
+            ## Functions-As-A-Service
 
-          * NodeJS 4.3 (and 0.10.38)
-          * Python
-          * Java
-        </section>
-        <section data-markdown>
-          ## A day in the life
+            * run code
+            * in response to events
+            * to do stuff
+            * without servers
+          </section>
+          <section data-markdown>
+            ## Run what code?
 
-          * init
-          * handling
+            * NodeJS 4.3 (and 0.10.38)
+            * Python 2.7
+            * Java 8
+            * ...think microservices
+          </section>
+          <section data-markdown>
+            ## Events?
+
+            * setup code and an "event handler"
+            * a standard interface for eg.
+              * direct invocation (push)
+              * notifications (push)
+              * schedules (push)
+              * Kinesis streams (pull)
+          </section>
+          <section data-markdown>
+            ## To do stuff?
+
+            * implement an API endpoint
+            * copy records into Elasticsearch
+            * perform a healthcheck
+            * insert records into a database
+            * deploy some software
+            * deploy some infrastructuress
+            * post to Slack
+            * ... and so on
+          </section>
+          <section data-markdown>
+            ## Without servers?
+
+            * well, sort of
+            * it runs on servers really
+            * you don't run the servers
+            * you pay for processing time
+          </section>
         </section>
         <section>
           <section data-markdown>
-            ## Where's my environment?
-          </section>
-          <section data-markdown>
-            ## What you have
+            ##  Srsly?
 
-            * Lambda ARN
+            * what's the catch?
+          </section>
+          <section data-markdown>
+            ## Tooling
 
-            (also some other stuff like allocated memory, time left until timeout)
+            * There's not much of it
+            * AWS CLI and CloudFormation support
+            * Serverless (tffka JAWS)
+            * Early days, maturity will take time
           </section>
           <section data-markdown>
-            ## What's missing
-            
-            * Environment variables!
+            ## Latency
+
+            * startup time (esp. JVM)
+            * once started, may be reused
+            * not for highly latency-sensitive applications
           </section>
           <section data-markdown>
-            ## Workarounds
-            
-            * Use S3 for Lambda config
+            ## Timeouts
+
+            * must set a timeout, up to 5 mins
+            * not suitable for potentially long-running tasks
+            * unless they can be broken down
+          </section>
+          <section data-markdown>
+            ## Limits
+
+            * Subject to AWS limits
+            * at most 100 running functions
+            * impacted by other limits
+             * eg. # of Kinesis partitions limits consuming Lambdas
+            * limits can be increased on request to AWS
+          </section>
+          <section data-markdown>
+            ## Lock-in
+
+            * Google Functions
+            * Azure
+            * No API or implementation compatibility
+          </section>
+          <section data-markdown>
+            ## Ecosystem Maturity
+
+            * or lack thereof
+            * good practices pending
+            * eg. testing, deployment
           </section>
         </section>
         <section>
           <section data-markdown>
-            ## In practice
+            ## It's a Lambda Function's Life
+            
+            Somewhere in the cloud, an event makes its way towards your new Lambda function...
+            
+          </section>
+          <section data-markdown>
+            ## Before the first event...
+            
+            Your function sleeps soundly
+          </section>
+          <section data-markdown>
+            ## When the first event arrives
+            
+            * Your function is deployed
+            * Then, it's run with the event
+            * So it's slow
+            * But you can initialize stuff
+          </section>
+          <section data-markdown>
+            ## When another event arrives...
+            
+            * Your function may already be running, so
+              * No deployment time
+              * No init to run
+              * Just run the handler function with the new event
+              * So it's fast
+          </section>
+          <section data-markdown>
+            ## Or...
+            
+            * Another instance might be deployed
+            * So it could still be slow
+          </section>
+          <section data-markdown>
+            ## If the function produces an error
+
+            * The event will be retried
+            * Retry strategy varies by event type
+              * Push invocations retry three times
+              * Pull invocations will retry indefinitely
+            * Thoughtful error handling needed!
+            * Not to mention monitoring...
+          </section>
+          <section data-markdown>
+            ## Fast Invocation
+
+            * Time on the order of...
+            * Plus your compute time
+            * Happens when an instance is running, waiting to process
+          </section>
+          <section data-markdown>
+            ## Slow Invocation
+            
+            * Time anything from ms to several seconds
+            * Fastest for (nodejs?)
+            * Much slower for JVM (start time)
+            * Slowest for other JVM languages (start time + large artifacts)
+          </section>
+          <section data-markdown>
+            ## Fast or Slow?
+
+            * Surprise!
+            * You can't tell beforehand
+            * Under load
+              * expect many more fast invocations than slow ones
+              * after startup
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            ## Environmentally Unfriendly?
+
+            What does a Lambda's runtime environment look like?
+          </section>
+          <section data-markdown>
+            ## You have...
+
+            * The ARN
+            * Request ID
+            * Allocated memory, time remaining
+          </section>
+          <section data-markdown>
+            ## You don't have...
+            
+            * Environment variables
+            * Config files
+          </section>
+          <section data-markdown>
+            ## Configure all the things
+
+            * so you wrote the code
+            * how do you configure it?
+          </section>
+          <section data-markdown>
+            ## Include the Batteries?
+
+            * pack config up as part of build and/or deployment
+            * but then not the same artifact
+            * does it matter?
+          </section>
+          <section data-markdown>
+            ## Look it up?
+
+            * store config somewhere else (like s3)
+            * indexed by lambda ARN
+            * but extra call at runtime
+            * init+memoize?
+          </section>
+          <section data-markdown>
+            ## Configure the Trigger?
+
+            * Include config in the triggering "event"
+            * Might work well for manual invocation
+            * Might mix config with data
+            * Harder to reason about lambda "pipelines"
+          </section>
+          <section data-markdown>
+            ## Approach n
+
+            * your solution here?
+            * wait for AWS to solve the problem
+            * see if other providers do better
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            ## Enough Dev, let's talk Ops
+          </section>
+          <section data-markdown>
+            ## How much did that cost?
+
+            * pay for compute time used
+            * rounded to next 100ms
+            * could save $$$ on 
+          </section>
+          <section data-markdown>
+            ## 
           </section>
           <section data-markdown>
             ## CloudWatch
             
             * logging
             * monitoring
+            * alerting
+          </section>
+          <section>
+            errors
+            retrying
+            aliases, versions
+            scheduling
+            private resources
           </section>
         </section>
       </div>
     </div>
+
 
     <script src="lib/js/head.min.js"></script>
     <script src="js/reveal.js"></script>
