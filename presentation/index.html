@@ -166,7 +166,7 @@
             * So it could still be slow
           </section>
           <section data-markdown>
-            ## If the function produces an error
+            ## If the function errors
 
             * The event will be retried
             * Retry strategy varies by event type
@@ -198,6 +198,64 @@
             * Under load
               * expect many more fast invocations than slow ones
               * after startup
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
+            ## Lambda Triggers
+
+            What kinds of events can invoke a Lambda function?
+          </section>
+          <section data-markdown>
+            ## Direct invocation (Push)
+
+            * Mash the test button
+            * Call InvokeFunction using SDK or CLI
+            * Retries on error twice (three total attempts)
+            * Same retry strategy for all push triggers
+          </section>
+          <section data-markdown>
+            ## CloudWatch Events
+
+            * Enables scheduled invocation
+            * Cron/rate
+          </section>
+          <section>
+            ## API Gateway (Push)
+
+            * HTTP APIs
+            * Invoking Lambda functions
+            * Powerful, feature-rich
+            * Could be a whole talk on its own
+          </section>
+          <section>
+            ## SNS Notification (Push)
+
+            * Simple Notification Service
+            * Pub/Sub
+            * Venerable AWS Service
+            * Supports any service producing SNS messages
+              * S3
+              * CloudWatch logs/alarms
+              * CloudFormation
+          </section>
+                    <section>
+            ## Kinesis Stream (Pull)
+
+            * Pull batches of records from Kinesis
+            * Keep retrying indefinitely on error
+          </section>
+          <section>
+            ## Kinesis Stream (Pull)
+
+            * Pull batches of records from Kinesis
+            * Keep retrying indefinitely on error
+          </section>
+          <section>
+            ## DynamoDB Stream (Pull)
+
+            * React to writes
+            * Tables and Indexes
           </section>
         </section>
         <section>
@@ -251,7 +309,7 @@
             * Harder to reason about lambda "pipelines"
           </section>
           <section data-markdown>
-            ## Approach n
+            ## Approach 'n'
 
             * your solution here?
             * wait for AWS to solve the problem
@@ -263,32 +321,120 @@
             ## Enough Dev, let's talk Ops
           </section>
           <section data-markdown>
-            ## How much did that cost?
+            ## Automation
+
+            * CLI and CloudFormation support
+            * CRUD functions
+            * Publish versions
+            * Assign aliases
+          </section>
+          <section data-markdown>
+            ## Permissions
+
+            * IAM policies and roles
+            * Different for push and pull invocation
+            * Push needs permissions to invoke the function
+            * Lambda needs permissions to invoke the pull resource
+          </section>
+          <section data-markdown>
+            ## Testing in the Cloud
+
+            * Configure Sample Event
+            * Mash the test button
+            * Look at the logs
+            * Beware of side effects
+          </section>
+          <section data-markdown>
+            ## Testing Locally
+
+            * Technically straightforward
+            * Harder with Java
+            * Glue code may be tough to unit test usefully
+            * Docker might help (fake-s3, dynamodb-local, etc.)
+          </section>
+          <section data-markdown>
+            ## How much does it cost?
 
             * pay for compute time used
             * rounded to next 100ms
-            * could save $$$ on 
+            * could be big savings
           </section>
           <section data-markdown>
-            ## 
+            ## Aliases and Versions
+
+            * Publish immutable versions
+            * Point an Alias at a Version
+            * No downtime
+            * Easy rollback
+            * Sounds great...
+          </section>
+          <section data-markdown>
+            ## Aliases and Versions?
+
+            * Complicates automation
+            * Logs for aliases get mixed up
+            * Extra stuff to learn
+          </section>
+          <section data-markdown>
+            ## State
+
+            * No predictable memory
+            * Interesting problems involve remembering stuff
+            * Nearest reliable memory is over the network
+            * Slooooow
+            * Can limit performance and parallelism
+          </section>
+          <section data-markdown>
+            ## Private resources
+
+            * New feature
+            * Lambdas run in your subnets
+            * Can access private resources
+              * RDS databases (postgresql, mysql, etc.)
+              * Redshift
+              * Elasticsearch
+              * ElastiCache (redis/memcached)
+              * etc.
+          </section>
+          <section data-markdown>
+            ## Private Resources
+
+            * Can route outbound traffic
+            * Perhaps must route outbound traffic!
+            * Via NAT instances or NAT Gateway
+            * So, known IPs
+            * Useful for IP whitelisting
           </section>
           <section data-markdown>
             ## CloudWatch
             
-            * logging
-            * monitoring
-            * alerting
+            * Logs
+            * Monitoring
+            * Alerts
+          </section>
+          <section data-markdown>
+            ## The Future            
           </section>
           <section>
-            errors
-            retrying
-            aliases, versions
+            <section data-markdown>
+              ## Learn more
+
+              * [AWS Lambda documentation](https://...)
+              * [AWS Lambda in CloudFormation]
+              * [AWS CLI for Lambda]
+              * [AWS Lambda blog](https://aws.amazon.com/blogs/compute/category/aws-lambda/)
+              * [Serverless]
+              * [Claudia]
+              * [IOPipe]
+            </section>
+          </section>
+          <section>
             scheduling
-            private resources
+            event sources multiple
             many aws services are serverless - if you don't need to worry about scaling it
             security
-            caching
-            iam
+            api gateway
+            "recursion" over a stream
           </section>
         </section>
       </div>

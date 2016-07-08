@@ -6,4 +6,4 @@ AWS Lambda intro for Sheffield Devops July 2016
 
 * open presentation/index.html in a web browser
 * <n> and <p> for next, previous slide
-* arrow keys to navigate directlys
+* arrow keys to navigate directly
