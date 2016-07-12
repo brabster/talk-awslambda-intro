@@ -23,12 +23,12 @@
   </head>
   <body>
     <!--
-        
+
       -->
     <div class="reveal">
       <div class="slides">
         <section>
-	  <section data-markdown>
+          <section data-markdown>
             ## What is AWS Lambda?
           </section>
           <section data-markdown>
@@ -42,31 +42,63 @@
           <section data-markdown>
             ## Run what code?
 
-            * NodeJS 4.3 (and 0.10.38)
+            * NodeJS 4.3 (and 0.10.48)
             * Python 2.7
             * Java 8
             * ...think microservices
+
+            Note:
+            Node 0.10.48 runtime at EOL Oct 2016
+          </section>
+          <section data-markdown>
+            ## Run what code?
+
+            Setup code and an "event handler"
+          </section>
+          <section data-markdown>
+            ## Run what code?
+
+            To give you an idea of the Lambda API
+
+            ```
+            exports.handler = function(event, context) {
+              console.log('Hello', event.name, '!');
+            }
+            ```
+
+            ```
+            def my_handler(event, context):
+              print('Hello {}!'.format(event['name']))
+            ```
+
+            ```
+            package ...
+            import ...
+            public class Hello {
+              public void handler(String name, Context context) {
+                System.out.println(String.format("Hello %s!", name));
+              }
+            }
+            ```
           </section>
           <section data-markdown>
             ## Events?
 
-            * setup code and an "event handler"
-            * a standard interface for eg.
-              * direct invocation (push)
-              * notifications (push)
-              * schedules (push)
-              * Kinesis streams (pull)
+            A standard interface for
+            * direct invocation
+            * notifications
+            * schedules
+            * streams
           </section>
           <section data-markdown>
             ## To do stuff?
 
+            * post to Slack
             * implement an API endpoint
             * copy records into Elasticsearch
-            * perform a healthcheck
             * insert records into a database
-            * deploy some software
-            * deploy some infrastructuress
-            * post to Slack
+            * perform a healthcheck
+            * deploy some stuff
             * ... and so on
           </section>
           <section data-markdown>
@@ -74,23 +106,42 @@
 
             * well, sort of
             * it runs on servers really
-            * you don't run the servers
+            * you don't manage the servers
             * you pay for processing time
+          </section>
+          <section data-markdown>
+            ## Pricing example
+
+            * 1x t2.micro Linux instance
+            * In us-east-1
+            * $14.64 per month
+
+            Note:
+            Pricing examples as at July 2016
+          </section>
+          <section data-markdown>
+            ## Pricing example
+
+            * 10,000 invocations per month
+            * 1.5Gb memory
+            * 500ms per invocation
+
+            = $0.13 per month ($0.000_002_501 per request)
+          </section>
+          <section data-markdown>
+            ## Pricing example
+
+            Free tiers
+
+            * First 750h of t2.micro instance usage
+            * First 1m Lambda invocations
           </section>
         </section>
         <section>
           <section data-markdown>
             ##  Srsly?
 
-            * what's the catch?
-          </section>
-          <section data-markdown>
-            ## Tooling
-
-            * There's not much of it
-            * AWS CLI and CloudFormation support
-            * Serverless (tffka JAWS)
-            * Early days, maturity will take time
+            What's the catch?
           </section>
           <section data-markdown>
             ## Latency
@@ -118,33 +169,40 @@
           <section data-markdown>
             ## Lock-in
 
-            * Google Functions
-            * Azure
-            * No API or implementation compatibility
+            * [Google Functions (currently Alpha)](https://cloud.google.com/functions/)
+            * [Azure Functions (currently Preview)](https://azure.microsoft.com/en-gb/services/functions)
+            * similar but incompatible APIs
+
+            Note:
+            Not just the Lambda APIs - also coupling to the producing/comsuming services like Kinesis for data formats
           </section>
           <section data-markdown>
             ## Ecosystem Maturity
 
             * or lack thereof
             * good practices pending
+            * comprehensive CLI/CloudFormation support
+            * immature third-party tooling
             * eg. testing, deployment
           </section>
         </section>
         <section>
           <section data-markdown>
             ## It's a Lambda Function's Life
-            
+
             Somewhere in the cloud, an event makes its way towards your new Lambda function...
-            
+
           </section>
           <section data-markdown>
             ## Before the first event...
-            
-            Your function sleeps soundly
+
+            * you create your function
+            * upload it on the console
+            *
           </section>
           <section data-markdown>
             ## When the first event arrives
-            
+
             * Your function is deployed
             * Then, it's run with the event
             * So it's slow
@@ -152,7 +210,7 @@
           </section>
           <section data-markdown>
             ## When another event arrives...
-            
+
             * Your function may already be running, so
               * No deployment time
               * No init to run
@@ -161,7 +219,7 @@
           </section>
           <section data-markdown>
             ## Or...
-            
+
             * Another instance might be deployed
             * So it could still be slow
           </section>
@@ -184,7 +242,7 @@
           </section>
           <section data-markdown>
             ## Slow Invocation
-            
+
             * Time anything from ms to several seconds
             * Fastest for (nodejs?)
             * Much slower for JVM (start time)
@@ -215,47 +273,49 @@
             * Same retry strategy for all push triggers
           </section>
           <section data-markdown>
-            ## CloudWatch Events
+            ## CloudWatch Events (Push)
 
-            * Enables scheduled invocation
-            * Cron/rate
+            * enables scheduled invocation
+            * cron/rate
+            * specify event content
           </section>
-          <section>
+          <section data-markdown>
             ## API Gateway (Push)
 
             * HTTP APIs
-            * Invoking Lambda functions
-            * Powerful, feature-rich
-            * Could be a whole talk on its own
+            * invoking Lambda functions
+            * powerful, feature-rich
+            * slow startup could be an issue
+            * could be a whole talk on its own
           </section>
-          <section>
+          <section data-markdown>
             ## SNS Notification (Push)
 
-            * Simple Notification Service
-            * Pub/Sub
-            * Venerable AWS Service
-            * Supports any service producing SNS messages
+            * simple Notification Service
+            * pub/sub
+            * venerable AWS Service
+            * supports any service producing SNS messages
               * S3
               * CloudWatch logs/alarms
               * CloudFormation
           </section>
-                    <section>
+          <section data-markdown>
             ## Kinesis Stream (Pull)
 
-            * Pull batches of records from Kinesis
-            * Keep retrying indefinitely on error
+            * pull batches of records from Kinesis
+            * keep retrying indefinitely on error
           </section>
-          <section>
+          <section data-markdown>
             ## Kinesis Stream (Pull)
 
-            * Pull batches of records from Kinesis
-            * Keep retrying indefinitely on error
+            * pull batches of records from Kinesis
+            * keep retrying indefinitely on error
           </section>
-          <section>
+          <section data-markdown>
             ## DynamoDB Stream (Pull)
 
-            * React to writes
-            * Tables and Indexes
+            * react to writes
+            * tables and indexes
           </section>
         </section>
         <section>
@@ -265,25 +325,28 @@
             What does a Lambda's runtime environment look like?
           </section>
           <section data-markdown>
-            ## You have...
+            ## The context provides
 
-            * The ARN
-            * Request ID
-            * Allocated memory, time remaining
+            * invoked Lambda function ARN
+            * request ID
+            * allocated memory, time remaining, etc.
           </section>
           <section data-markdown>
             ## You don't have...
-            
-            * Environment variables
-            * Config files
 
-            (so lambdas are 11-factor apps?)
+            * environment variables
+            * config files
+
+            (so Lambdas are 11-factor apps?)
           </section>
           <section data-markdown>
-            ## Configure all the things
+            ## configure all the things
 
             * so you wrote the code
             * how do you configure it?
+
+            Note:
+            There's no way to configure the same Lambda function in different ways
           </section>
           <section data-markdown>
             ## Include the Batteries?
@@ -303,10 +366,10 @@
           <section data-markdown>
             ## Configure the Trigger?
 
-            * Include config in the triggering "event"
-            * Might work well for manual invocation
-            * Might mix config with data
-            * Harder to reason about lambda "pipelines"
+            * include config in the triggering "event"
+            * might work well for manual invocation
+            * might mix config with data
+            * harder to reason about lambda "pipelines"
           </section>
           <section data-markdown>
             ## Approach 'n'
@@ -372,8 +435,13 @@
             ## Aliases and Versions?
 
             * Complicates automation
+            * Account-global
             * Logs for aliases get mixed up
             * Extra stuff to learn
+
+
+            Note:
+            Cannot reference a version in a different account
           </section>
           <section data-markdown>
             ## State
@@ -407,25 +475,25 @@
           </section>
           <section data-markdown>
             ## CloudWatch
-            
+
             * Logs
             * Monitoring
             * Alerts
           </section>
           <section data-markdown>
-            ## The Future            
+            ## The Future
           </section>
           <section>
             <section data-markdown>
               ## Learn more
 
-              * [AWS Lambda documentation](https://...)
-              * [AWS Lambda in CloudFormation]
-              * [AWS CLI for Lambda]
+              * [AWS Lambda documentation](https://aws.amazon.com/documentation/lambda/)
+              * [AWS Lambda in CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
+              * [AWS CLI for Lambda](http://docs.aws.amazon.com/cli/latest/reference/lambda/)
               * [AWS Lambda blog](https://aws.amazon.com/blogs/compute/category/aws-lambda/)
-              * [Serverless]
-              * [Claudia]
-              * [IOPipe]
+              * [Serverless](http://serverless.com/)
+              * [Claudia](https://github.com/claudiajs/claudia)
+              * [IOpipe](https://www.iopipe.com/)
             </section>
           </section>
           <section>
