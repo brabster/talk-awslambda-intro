@@ -67,7 +67,9 @@
             ```
 
             ```
-            def my_handler(event, context):
+            from...import...
+            import...
+            def handler(event, context):
               print('Hello {}!'.format(event['name']))
             ```
 
@@ -87,7 +89,7 @@
             A standard interface for
             * direct invocation
             * notifications
-            * schedules
+            * scheduled triggers
             * streams
           </section>
           <section data-markdown>
@@ -106,8 +108,12 @@
 
             * well, sort of
             * it runs on servers really
+            * in containers actually
             * you don't manage the servers
             * you pay for processing time
+
+            Note:
+            AWS blogs mention containers
           </section>
           <section data-markdown>
             ## Pricing example
@@ -122,11 +128,14 @@
           <section data-markdown>
             ## Pricing example
 
-            * 10,000 invocations per month
+            * 44,640 invocations per month
             * 1.5Gb memory
             * 500ms per invocation
 
-            = $0.13 per month ($0.000_002_501 per request)
+            = $0.56 per month ($0.000_002_501 per request)
+
+            Note:
+            # of invocations = 1/min/31 days
           </section>
           <section data-markdown>
             ## Pricing example
@@ -135,6 +144,9 @@
 
             * First 750h of t2.micro instance usage
             * First 1m Lambda invocations
+
+            Note:
+            744h in a month. 1 free t2.micro per month. 22 Lambdas invoking every minute
           </section>
         </section>
         <section>
@@ -192,70 +204,74 @@
 
             Somewhere in the cloud, an event makes its way towards your new Lambda function...
 
+            Note:
+            Break to console; demo setup for Python hello world
           </section>
           <section data-markdown>
             ## Before the first event...
 
-            * you create your function
-            * upload it on the console
-            *
+            * you write your function
+            * upload it
+            * set memory, vpc configuration
           </section>
           <section data-markdown>
             ## When the first event arrives
 
-            * Your function is deployed
-            * Then, it's run with the event
-            * So it's slow
-            * But you can initialize stuff
+            * your function is deployed
+            * then, it's run with the event
+            * so it's slow
+            * but you can initialize stuff
           </section>
           <section data-markdown>
             ## When another event arrives...
 
-            * Your function may already be running, so
-              * No deployment time
-              * No init to run
-              * Just run the handler function with the new event
-              * So it's fast
+            Your function may already be running, so
+              * no deployment time
+              * no init to run
+              * just run the handler function with the new event
+              * so it's fast
           </section>
           <section data-markdown>
             ## Or...
 
-            * Another instance might be deployed
-            * So it could still be slow
-          </section>
-          <section data-markdown>
-            ## If the function errors
+            Another container might be deployed
+              * parallelism
+              * you blew the container up
+              * resource reallocation
 
-            * The event will be retried
-            * Retry strategy varies by event type
-              * Push invocations retry three times
-              * Pull invocations will retry indefinitely
-            * Thoughtful error handling needed!
-            * Not to mention monitoring...
-          </section>
-          <section data-markdown>
-            ## Fast Invocation
-
-            * Time on the order of...
-            * Plus your compute time
-            * Happens when an instance is running, waiting to process
-          </section>
-          <section data-markdown>
-            ## Slow Invocation
-
-            * Time anything from ms to several seconds
-            * Fastest for (nodejs?)
-            * Much slower for JVM (start time)
-            * Slowest for other JVM languages (start time + large artifacts)
+            So it could still be slow
           </section>
           <section data-markdown>
             ## Fast or Slow?
 
-            * Surprise!
-            * You can't tell beforehand
-            * Under load
-              * expect many more fast invocations than slow ones
-              * after startup
+            Surprise! You can't tell beforehand
+            
+            Under load, expect many more fast invocations than slow ones
+
+            Note:
+            Break to console - demo running hello world cold/hot
+
+          </section>
+          <section data-markdown>
+            ## How Slow is Slow?
+
+            * time anything from ms to several seconds
+            * fastest for Python
+            * marginally slower for NodeJS
+            * much slower for JVM (start time)
+            * slowest for other JVM languages (start time + large artifacts)
+          </section>
+          <section data-markdown>
+            ## If there's an error
+
+            The event will be retried
+            
+            * retry strategy varies by event type
+              * push invocations retry three times
+              * pull invocations will retry indefinitely
+
+            * thoughtful error handling needed!
+            * not to mention monitoring...
           </section>
         </section>
         <section>
@@ -267,10 +283,10 @@
           <section data-markdown>
             ## Direct invocation (Push)
 
-            * Mash the test button
-            * Call InvokeFunction using SDK or CLI
-            * Retries on error twice (three total attempts)
-            * Same retry strategy for all push triggers
+            * mash the test button
+            * call InvokeFunction using SDK or CLI
+            * retries on error twice (three total attempts)
+            * same retry strategy for all push triggers
           </section>
           <section data-markdown>
             ## CloudWatch Events (Push)
@@ -291,7 +307,7 @@
           <section data-markdown>
             ## SNS Notification (Push)
 
-            * simple Notification Service
+            * Simple Notification Service
             * pub/sub
             * venerable AWS Service
             * supports any service producing SNS messages
@@ -303,12 +319,7 @@
             ## Kinesis Stream (Pull)
 
             * pull batches of records from Kinesis
-            * keep retrying indefinitely on error
-          </section>
-          <section data-markdown>
-            ## Kinesis Stream (Pull)
-
-            * pull batches of records from Kinesis
+            * parallelism limited by # shards
             * keep retrying indefinitely on error
           </section>
           <section data-markdown>
@@ -317,19 +328,44 @@
             * react to writes
             * tables and indexes
           </section>
+          <section data-markdown>
+            ## Multiplexing
+
+            Configure several event sources for the same Lambda
+
+            Note:
+            Not sure mutiplexing is the right word
+          </section>
+          <section data-markdown>
+            ## Recursion
+
+            Mechanism to break down long-running jobs via pagination and batching
+            
+            * Invoke self
+              * via state (put to same stream/bucket/table that is source)
+            * via direct invocation of my ARN
+
+            Note:
+            Novel?
+          </section>
         </section>
         <section>
+          <section data-markdown>
+            ## Operating Lambda
+          </section>
+          <section data-markdown>
+            ## Microservices Concerns
+
+            * robustness
+            * performance
+
+            Note:
+            Why set a timeout less than 5 mins? How to implement a circuit breaker?
+          </section>
           <section data-markdown>
             ## Environmentally Unfriendly?
 
             What does a Lambda's runtime environment look like?
-          </section>
-          <section data-markdown>
-            ## The context provides
-
-            * invoked Lambda function ARN
-            * request ID
-            * allocated memory, time remaining, etc.
           </section>
           <section data-markdown>
             ## You don't have...
@@ -338,6 +374,14 @@
             * config files
 
             (so Lambdas are 11-factor apps?)
+          </section>
+          <section data-markdown>
+            ## You do have...
+
+            The context object provides
+            * invoked Lambda function ARN
+            * request ID
+            * allocated memory, time remaining, etc.
           </section>
           <section data-markdown>
             ## configure all the things
@@ -381,15 +425,33 @@
         </section>
         <section>
           <section data-markdown>
-            ## Enough Dev, let's talk Ops
-          </section>
-          <section data-markdown>
             ## Automation
 
             * CLI and CloudFormation support
             * CRUD functions
             * Publish versions
             * Assign aliases
+          </section>
+          <section data-markdown>
+            ## Aliases and Versions
+
+            * Publish immutable versions
+            * Point an Alias at a Version
+            * No downtime
+            * Easy rollback
+            * Sounds great...
+          </section>
+          <section data-markdown>
+            ## Aliases and Versions?
+
+            * Complicates automation
+            * Account-global
+            * Logs for aliases get mixed up
+            * Extra stuff to learn
+
+
+            Note:
+            Cannot reference a version in a different account
           </section>
           <section data-markdown>
             ## Permissions
@@ -421,28 +483,7 @@
             * pay for compute time used
             * rounded to next 100ms
             * could be big savings
-          </section>
-          <section data-markdown>
-            ## Aliases and Versions
-
-            * Publish immutable versions
-            * Point an Alias at a Version
-            * No downtime
-            * Easy rollback
-            * Sounds great...
-          </section>
-          <section data-markdown>
-            ## Aliases and Versions?
-
-            * Complicates automation
-            * Account-global
-            * Logs for aliases get mixed up
-            * Extra stuff to learn
-
-
-            Note:
-            Cannot reference a version in a different account
-          </section>
+          </section> 
           <section data-markdown>
             ## State
 
@@ -455,9 +496,9 @@
           <section data-markdown>
             ## Private resources
 
-            * New feature
-            * Lambdas run in your subnets
-            * Can access private resources
+            * new feature for 2016
+            * lambdas run in your subnets
+            * can access private resources
               * RDS databases (postgresql, mysql, etc.)
               * Redshift
               * Elasticsearch
@@ -467,21 +508,27 @@
           <section data-markdown>
             ## Private Resources
 
-            * Can route outbound traffic
-            * Perhaps must route outbound traffic!
-            * Via NAT instances or NAT Gateway
-            * So, known IPs
-            * Useful for IP whitelisting
+            * can route outbound traffic
+            * perhaps must route outbound traffic!
+            * via NAT instances or NAT Gateway
+            * so, known IPs
+            * useful for IP whitelisting
+
+            Note:
+            If the Lambda needs to talk to AWS or third-party services, outbound internet access will be needed.
           </section>
           <section data-markdown>
             ## CloudWatch
 
-            * Logs
-            * Monitoring
-            * Alerts
+            * logs
+            * monitoring
+            * alerts
           </section>
           <section data-markdown>
             ## The Future
+
+            * competition
+            * IOpipe
           </section>
           <section>
             <section data-markdown>
@@ -496,15 +543,10 @@
               * [IOpipe](https://www.iopipe.com/)
             </section>
           </section>
-          <section>
-            scheduling
-            event sources multiple
-            many aws services are serverless - if you don't need to worry about scaling it
-            security
-            api gateway
-            "recursion" over a stream
-          </section>
         </section>
+        <!-- TODO
+             monitoring/logging pics
+             security? -->
       </div>
     </div>
 
