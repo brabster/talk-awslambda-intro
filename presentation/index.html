@@ -42,7 +42,7 @@
           <section data-markdown>
             ## Run what code?
 
-            * NodeJS 4.3 (and 0.10.48)
+            * NodeJS 4.3
             * Python 2.7
             * Java 8
             * ...think microservices
@@ -339,14 +339,23 @@
           <section data-markdown>
             ## Recursion
 
+            Not calculating Fibonacci sequences!
+
+            Note:
+            Recursion just in memory will be ridiculously faster
+          </section>
+          <section data-markdown>
+            ## Recursion
+
             Mechanism to break down long-running jobs via pagination and batching
-            
+
+            ![Stateless recursive Lambda](presentation/images/lambda-recursive-invoke-async.svg "Stateless recursive Lambda")
             * Invoke self
               * via state (put to same stream/bucket/table that is source)
             * via direct invocation of my ARN
 
-            Note:
-            Novel?
+            Notes:
+            InvokeAsync(fname, arg-as-string) to invoke a function asynchronously
           </section>
         </section>
         <section>
@@ -448,7 +457,6 @@
             * Account-global
             * Logs for aliases get mixed up
             * Extra stuff to learn
-
 
             Note:
             Cannot reference a version in a different account
