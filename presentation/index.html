@@ -502,6 +502,19 @@
             * Can limit performance and parallelism
           </section>
           <section data-markdown>
+            ## Security
+
+            See [Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/)
+            
+            * Lambda runs in container
+            * access to invoke Lambda via IAM
+            * Lambda source code in s3 via IAM
+            * Lambda access to other AWS resources via IAM
+
+            Note:
+            SRM - AWS manages security of the cloud, customer manages their security in the cloud
+          </section>
+          <section data-markdown>
             ## Private resources
 
             * new feature for 2016
@@ -554,7 +567,7 @@
         </section>
         <!-- TODO
              monitoring/logging pics
-             security? -->
+             -->
       </div>
     </div>
 
