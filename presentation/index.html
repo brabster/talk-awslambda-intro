@@ -29,7 +29,24 @@
       <div class="slides">
         <section>
           <section data-markdown>
+            # Welcome!
+          </section>
+          <section data-markdown>
+            ## Why am I giving this talk?
+
+            * Using Lambda since GA release in early 2015
+            * Currently managing ~30 Lambda functions
+            * by N environments
+
+            I can share my experiences!
+          </section>
+        </section>
+        <section>
+          <section data-markdown>
             ## What is AWS Lambda?
+
+            Note:
+            Check who's used AWS before; security warning if needed
           </section>
           <section data-markdown>
             ## Functions-As-A-Service
@@ -360,17 +377,19 @@
         </section>
         <section>
           <section data-markdown>
-            ## Operating Lambda
-          </section>
-          <section data-markdown>
             ## Microservices Concerns
 
             * robustness
             * performance
 
             Note:
-            Why set a timeout less than 5 mins? How to implement a circuit breaker?
+            Who's doing microservices?
+            How big are they?
+            Why set a timeout less than 5 mins?
+            How to implement a circuit breaker?
           </section>
+        </section>
+        <section>
           <section data-markdown>
             ## Environmentally Unfriendly?
 
@@ -433,6 +452,9 @@
           </section>
         </section>
         <section>
+          <section data-markdown>
+            ## Other Operational Concerns
+          </section>
           <section data-markdown>
             ## Automation
 
@@ -554,25 +576,41 @@
             * IOpipe et al.?
             * git push master lambda?
           </section>
-          <section>
-            <section data-markdown>
-              ## Learn more
+        </section>
+        <section>
+          <section data-markdown>
+            ## Learn more
 
-              * [AWS Lambda documentation](https://aws.amazon.com/documentation/lambda/)
-              * [AWS Lambda in CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
-              * [AWS CLI for Lambda](http://docs.aws.amazon.com/cli/latest/reference/lambda/)
-              * [AWS Lambda blog](https://aws.amazon.com/blogs/compute/category/aws-lambda/)
-              * [Serverless](http://serverless.com/)
-              * [Claudia](https://github.com/claudiajs/claudia)
-              * [IOpipe](https://www.iopipe.com/)
-            </section>
+            * [AWS Lambda documentation](https://aws.amazon.com/documentation/lambda/)
+            * [AWS Lambda in CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
+            * [AWS CLI for Lambda](http://docs.aws.amazon.com/cli/latest/reference/lambda/)
+            * [AWS Lambda blog](https://aws.amazon.com/blogs/compute/category/aws-lambda/)
+            * [Serverless](http://serverless.com/)
+            * [Claudia](https://github.com/claudiajs/claudia)
+            * [IOpipe](https://www.iopipe.com/)
           </section>
+        </section>
+        <section>
           <section data-markdown>
             ## Questions?
           </section>
+        </section>
+        <section>
           <section data-markdown>
-            ## Thank you!
-
+            ## Thanks to
+            
+            * [@sheffieldDevops](https://twitter.com/sheffieldDevops)
+            * Sky Betting and Gaming
+            * Presentation software [reveal.js](http://lab.hakim.se/reveal-js/#/)
+            * Diagram software [draw.io](https://www.draw.io)
+            
+            We're hiring [@SkyBetCareers](https://twitter.com/SkyBetCareers), mention @brabster :)
+          </section>
+          <section data-markdown>
+            ## Thank you
+            
+            For turning up and listening!
+            
             * I'm [@brabster](https://twitter.com/brabster)
             * This presentation is on [GitHub Pages](https://brabster.github.io/talk-awslambda-intro)
             
@@ -581,7 +619,7 @@
         </section>
         <!-- TODO
              monitoring/logging pics
-             -->
+          -->
       </div>
     </div>
 
