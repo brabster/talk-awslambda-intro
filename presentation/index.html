@@ -347,15 +347,15 @@
           <section data-markdown>
             ## Recursion
 
-            Mechanism to break down long-running jobs via pagination and batching
+            Mechanism to break down long-running jobs
 
             ![Stateless recursive Lambda](images/lambda-recursive-stateless.png "Stateless recursive Lambda")
-            * Invoke self
-              * via state (put to same stream/bucket/table that is source)
-            * via direct invocation of my ARN
 
-            Notes:
-            InvokeAsync(fname, arg-as-string) to invoke a function asynchronously
+            * call self asynchronously
+            * or use stateful intermediary (like Kinesis)
+
+            Note:
+            InvokeAsync(fname, arg-as-string) to invoke a function asynchronously. Could use Kinesis to parallelise slower object retrieval step
           </section>
         </section>
         <section>
