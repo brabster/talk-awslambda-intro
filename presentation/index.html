@@ -34,9 +34,10 @@
           <section data-markdown>
             ## Why am I giving this talk?
 
-            * Using Lambda since GA release in early 2015
-            * Currently managing ~30 Lambda functions
-            * by N environments
+            * using Lambda since GA release in early 2015
+            * currently have 32 lambda functions in our production build
+            * plus infrastructure, configuration, etc.
+            * deploying through test, pre-production and production
 
             I can share my experiences!
           </section>
@@ -178,6 +179,10 @@
             * startup time (esp. JVM)
             * once started, may be reused
             * not for highly latency-sensitive applications
+
+            Note:
+            Very informal measurement of Clojure Lambda. Cold start 20s, 5.5s of runtime.
+            Second invocation 900ms. 10th invocation 500ms.
           </section>
           <section data-markdown>
             ## Timeouts
@@ -346,6 +351,12 @@
             * tables and indexes
           </section>
           <section data-markdown>
+            ## Fan-out and Fan-in
+
+            * 0..* event sources per Lambda
+            * 0..* Lambdas per event source
+          </section>
+          <section data-markdown>
             ## Multiplexing
 
             Configure several event sources for the same Lambda
@@ -459,27 +470,27 @@
             ## Automation
 
             * CLI and CloudFormation support
-            * No CodeDeploy/CodePipeline support
+            * no CodeDeploy/CodePipeline support
             * CRUD functions
-            * Publish versions
-            * Assign aliases
+            * publish versions
+            * assign aliases
           </section>
           <section data-markdown>
             ## Aliases and Versions
 
-            * Publish immutable versions
-            * Point an Alias at a Version
-            * No downtime
-            * Easy rollback
-            * Sounds great...
+            * publish immutable versions
+            * point an Alias at a Version
+            * no downtime
+            * easy rollback
+            * sounds great...
           </section>
           <section data-markdown>
             ## Aliases and Versions?
 
-            * Complicates automation
-            * Account-global
-            * Logs for aliases get mixed up
-            * Extra stuff to learn
+            * complicates automation
+            * account-global
+            * logs for aliases get mixed up
+            * extra stuff to learn
 
             Note:
             Cannot reference a version in a different account
@@ -488,25 +499,25 @@
             ## Permissions
 
             * IAM policies and roles
-            * Different for push and pull invocation
-            * Push needs permissions to invoke the function
+            * different for push and pull invocation
+            * push needs permissions to invoke the function
             * Lambda needs permissions to invoke the pull resource
           </section>
           <section data-markdown>
             ## Testing in the Cloud
 
-            * Configure Sample Event
-            * Mash the test button
-            * Look at the logs
-            * Beware of side effects
+            * configure Sample Event
+            * mash the test button
+            * look at the logs
+            * beware of side effects
           </section>
           <section data-markdown>
             ## Testing Locally
 
-            * Technically straightforward
-            * Harder with Java
-            * Glue code may be tough to unit test usefully
-            * Docker might help (fake-s3, dynamodb-local, etc.)
+            * technically straightforward
+            * harder with Java
+            * glue code may be tough to unit test usefully
+            * docker might help (fake-s3, dynamodb-local, etc.)
           </section>
           <section data-markdown>
             ## How much does it cost?
@@ -518,11 +529,11 @@
           <section data-markdown>
             ## State
 
-            * No predictable memory
-            * Interesting problems involve remembering stuff
-            * Nearest reliable memory is over the network
-            * Slooooow
-            * Can limit performance and parallelism
+            * no predictable memory
+            * interesting problems involve remembering stuff
+            * nearest reliable memory is over the network
+            * slooooow
+            * can limit performance and parallelism
           </section>
           <section data-markdown>
             ## Security
@@ -567,6 +578,27 @@
             * logs
             * monitoring
             * alerts
+          </section>
+          <section data-markdown>
+            ## CloudWatch in Practice
+
+            Duration for Kinesis-based processor
+
+            ![Busy message processing Lambda](images/y-7d-x-1s-mt.png "Busy message processing Lambda")
+
+            * invocation duration
+            * average over 5-minute period
+          </section>
+          <section data-markdown>
+            ## CloudWatch in Practice
+
+            RTT and Duration for 3rd-party service healthcheck
+
+            ![RTT and Duration for 3rd-party service healthcheck](images/y-7d-x-1s-ih-rtt-and-invocation-time.png "RTT and Duration for 3rd-party service healthcheck")
+
+            * RTT (Orange)
+            * invocation duration (Blue)
+            * maxima over 5-minute period
           </section>
           <section data-markdown>
             ## The Future
