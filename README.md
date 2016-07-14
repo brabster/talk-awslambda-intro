@@ -1,6 +1,6 @@
 # talk-awslambda-intro
 
-AWS Lambda intro for Sheffield Devops July 2016
+[AWS Lambda intro for Sheffield Devops July 2016](https://brabster.github.io/talk-awslambda-intro)
 
 # Running the Slideshow
 
