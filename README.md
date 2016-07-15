@@ -8,6 +8,7 @@
 * Pricing example
 * Gotchas
 * Lambda function lifecycle
+* Recursive Lambda functions
 * Microservices aspects
 * Configuring Lambdas
 * Other operational concerns
