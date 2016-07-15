@@ -381,6 +381,7 @@
 
             * call self asynchronously
             * or use stateful intermediary (like Kinesis)
+            * see /code/recursive-lambda-example.js
 
             Note:
             InvokeAsync(fname, arg-as-string) to invoke a function asynchronously. Could use Kinesis to parallelise slower object retrieval step
@@ -518,13 +519,6 @@
             * harder with Java
             * glue code may be tough to unit test usefully
             * docker might help (fake-s3, dynamodb-local, etc.)
-          </section>
-          <section data-markdown>
-            ## How much does it cost?
-
-            * pay for compute time used
-            * rounded to next 100ms
-            * could be big savings
           </section>
           <section data-markdown>
             ## State
